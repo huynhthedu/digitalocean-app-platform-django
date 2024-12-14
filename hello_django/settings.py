@@ -21,13 +21,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '52@y%9$#3#)9cff)jdcl&0-@4(u!y)dw@l2!e2s8!(jrrta_u+'
+SECRET_KEY = os.getenv('SECRET_KEY', 'please-change-me')
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# # SECURITY WARNING: keep the secret key used in production secret!
+# SECRET_KEY = '52@y%9$#3#)9cff)jdcl&0-@4(u!y)dw@l2!e2s8!(jrrta_u+'
 
-ALLOWED_HOSTS = ['*']
+# # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = True
+
+# ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -42,6 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # new
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -89,14 +94,14 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'db',
-            # 'USER': db_info.username,
-            # 'PASSWORD': db_info.password,
-            # 'HOST': db_info.hostname,
-            # 'PORT': db_info.port,
-            'USER': 'postgres',
-            'PASSWORD': '123456',
-            'HOST': 'localhost',
-            'PORT': '5432',    
+            'USER': db_info.username,
+            'PASSWORD': db_info.password,
+            'HOST': db_info.hostname,
+            'PORT': db_info.port,
+            # 'USER': 'postgres',
+            # 'PASSWORD': '123456',
+            # 'HOST': 'localhost',
+            # 'PORT': '5432',    
             'OPTIONS': {'sslmode': 'require'},
         }
     }
@@ -141,3 +146,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = Path(BASE_DIR).joinpath("staticfiles")
 STATICFILES_DIRS = (Path(BASE_DIR).joinpath("static"),)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
